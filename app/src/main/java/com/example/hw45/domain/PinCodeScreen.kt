@@ -1,15 +1,10 @@
-package com.example.hw45.firstpage
+package com.example.hw45.domain
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,35 +18,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-
-@Composable
-fun ButtonWithText(
-    number: String,
-    onClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Button(
-        modifier = modifier
-            .padding(4.dp)
-            .size(width = 88.dp, height = 44.dp),
-        onClick = { onClick(number) },
-        shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(width = 2.dp, Color(173, 216, 230)),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
-    ) {
-        Text(text = number, color = Color(173, 216, 230), fontSize = 20.sp)
-    }
-}
+import androidx.navigation.NavController
+import com.example.hw45.data.Routes
+import com.example.hw45.presentation.ButtonWithText
 
 
 private var enteredText by mutableStateOf("")
 private var topTextColor by mutableStateOf(Color(0xff277da1))
 
 @Composable
-fun PinCodeScreen() {
+fun PinCodeScreen(navController: NavController) {
 
-    val password = "1234"
+    val password = "0000"
     val onClick: (String) -> Unit = { text ->
         if (enteredText.length < 4) {
             enteredText += text
@@ -70,7 +48,7 @@ fun PinCodeScreen() {
             Row {
                 FirstColumn(onClick = onClick)
                 SecondColumn(onClick = onClick)
-                ThirdColumn(password = password, onClick = onClick)
+                ThirdColumn(password = password, onClick = onClick, navController = navController)
             }
         }
     }
@@ -119,16 +97,17 @@ fun SecondColumn(onClick: (String) -> Unit) {
 }
 
 @Composable
-fun ThirdColumn(password: String, onClick: (String) -> Unit) {
+fun ThirdColumn(password: String, onClick: (String) -> Unit, navController: NavController) {
     Column(modifier = Modifier.padding(vertical = 16.dp)) {
         ButtonWithText(number = "3", onClick = onClick)
         ButtonWithText(number = "6", onClick = onClick)
         ButtonWithText(number = "9", onClick = onClick)
         ButtonWithText(number = "OK", onClick = {
-            topTextColor = if (enteredText == password) {
-                Color(0xff38b000)
+            if (enteredText == password) {
+                topTextColor =  Color(0xff38b000)
+                navController.navigate(Routes.second)
             } else {
-                Color(0xffce4257)
+                topTextColor = Color(0xffce4257)
             }
 
         })
